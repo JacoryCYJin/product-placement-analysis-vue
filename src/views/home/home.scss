@@ -1,0 +1,352 @@
+.container {
+    display: flex;
+    width: 1200px;
+    margin: 0 auto;
+    flex-direction: column;
+    padding-bottom: 50px;
+  
+    // 减小顶部空隙
+    padding-top: 10px;
+  
+    .top-section {
+      margin-bottom: 20px;
+    }
+  
+    .left {
+      //margin: auto 0 auto 0;
+      h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 25px;
+        margin-top: 0; // 减少顶部空白
+      }
+  
+      .reminder {
+        color: #556677;
+        display: inline-block;
+        width: 388px;
+        margin-bottom: 15px;
+      }
+  
+      .cssbuttons-io-button {
+        background: #2356f6;
+        color: white;
+        font-family: inherit;
+        padding: 0.35em;
+        padding-left: 1.2em;
+        font-size: 17px;
+        font-weight: 500;
+        border-radius: 0.9em;
+        border: none;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        box-shadow: inset 0 0 1.6em -0.6em #2356f6;
+        overflow: hidden;
+        position: relative;
+        height: 2.8em;
+        padding-right: 3.3em;
+        cursor: pointer;
+        margin-top: 40px;
+  
+        &:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+      }
+  
+      .cssbuttons-io-button .icon {
+        background: white;
+        margin-left: 1em;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 2.2em;
+        width: 2.2em;
+        border-radius: 0.7em;
+        box-shadow: 0.1em 0.1em 0.6em 0.2em #2356f6;
+        right: 0.3em;
+        transition: all 0.3s;
+      }
+  
+      .cssbuttons-io-button:hover:not(:disabled) .icon {
+        width: calc(100% - 0.6em);
+      }
+  
+      .cssbuttons-io-button .icon svg {
+        width: 1.1em;
+        transition: transform 0.3s;
+        color: #2356f6;
+      }
+  
+      .cssbuttons-io-button:hover:not(:disabled) .icon svg {
+        transform: translateX(0.1em);
+      }
+  
+      .cssbuttons-io-button:active:not(:disabled) .icon {
+        transform: scale(0.95);
+      }
+    }
+  
+    .right {
+      .videoUpload {
+        position: relative;
+        margin: 0 auto;
+        height: 333px;
+        width: 592px;
+  
+        button {
+          margin-bottom: 10px;
+        }
+  
+        video {
+          max-width: 100%;
+          max-height: 100%;
+        }
+        
+    .el-progress {
+          margin-bottom: 15px;
+  }
+  
+        // 处理中状态样式
+        .processing-status {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 10px;
+          background-color: #f0f9ff;
+          border-radius: 4px;
+          margin-bottom: 15px;
+          
+          .el-icon {
+            margin-right: 8px;
+            color: #409eff;
+            font-size: 18px;
+          }
+          
+          span {
+            color: #333;
+          }
+        }
+      }
+    }
+  
+    // 结果行样式
+    .result-row {
+      margin-top: 60px; // 增加上传区域和结果之间的间距
+      background: #f5f7fa;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+      
+      .result-left {
+        .result-image-container {
+          padding: 15px;
+          
+          h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        color: #333;
+          }
+          
+          img {
+            width: 100%; // 占满容器宽度
+            max-width: 520px; // 增大图片尺寸
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            height: auto; // 保持比例
+            display: block;
+            margin: 0 auto;
+          }
+        }
+      }
+      
+      .result-right {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        
+        // 场景识别结果
+        .scene-result-container {
+          padding: 15px;
+          
+          h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+          }
+          
+          .scene-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            
+            .scene-type {
+              font-size: 20px;
+              font-weight: bold;
+              color: #2356f6;
+              margin-bottom: 12px;
+              padding-bottom: 12px;
+              border-bottom: 1px solid #eee;
+            }
+            
+            .scene-description {
+          font-size: 14px;
+              line-height: 1.6;
+              color: #555;
+            }
+          }
+        }
+        
+        // 评分区域
+        .score-container {
+          padding: 15px;
+          
+          h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+          }
+          
+          .score-box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            
+            .score-label {
+              font-size: 16px;
+              color: #555;
+              margin-bottom: 15px;
+        }
+        
+        .score-value {
+              font-size: 42px;
+          font-weight: bold;
+          color: #2356f6;
+              padding: 10px 20px;
+              border: 3px solid #2356f6;
+              border-radius: 8px;
+              text-align: center;
+              display: inline-block;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+// 添加淡入动画效果
+.fade-in {
+  animation: fadeIn 0.8s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+// 禁用状态的按钮样式已经移到上面的按钮样式中
+
+// 评分加载状态
+.score-loading-box {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .el-icon {
+    font-size: 24px;
+    margin-right: 12px;
+    color: #2356f6;
+    animation: rotating 2s linear infinite;
+  }
+  
+  span {
+    font-size: 16px;
+    color: #2356f6;
+  }
+}
+
+// 添加旋转动画
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 添加场景检测状态的相关样式
+
+// 场景检测中的容器样式
+.scene-detecting-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .detecting-animation {
+    margin-right: 25px;
+    
+    .el-icon {
+      font-size: 48px;
+      color: #2356f6;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+  }
+  
+  .detecting-text {
+    h3 {
+      font-size: 22px;
+      color: #2356f6;
+      margin-bottom: 10px;
+    }
+    
+    p {
+      font-size: 14px;
+      color: #555;
+      max-width: 500px;
+    }
+  }
+}
+
+// 添加脉冲动画效果
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+}
+
+// 添加一些必要的样式，如果需要
+.canvas-container {
+  position: relative;
+  
+  canvas {
+    z-index: 10;
+  }
+}
