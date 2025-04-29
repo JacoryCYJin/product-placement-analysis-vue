@@ -24,9 +24,7 @@ import {
   adTypeOptions,
   currentAdType,
   customAdType,
-  exitAreaSelection,
-  taskStatus,
-  resultImages
+  exitAreaSelection
 } from './home.js'
 </script>
 
@@ -159,7 +157,6 @@ import {
           <div class="detecting-text">
             <h3>正在进行场景识别和内容分析</h3>
             <p>系统正在分析视频中的场景元素和广告内容，请稍候...</p>
-            <p v-if="taskStatus.progress">处理进度: {{ taskStatus.progress }}%</p>
           </div>
         </div>
       </el-col>
@@ -169,19 +166,6 @@ import {
         <div class="result-image-container" :class="{ 'fade-in': showResultImage }">
           <h3>检测结果图</h3>
           <img :src="resultImage" alt="检测结果" />
-          
-          <!-- 如果有多张结果图，添加缩略图查看 -->
-          <div class="thumbnail-container" v-if="resultImages.length > 1">
-            <div 
-              v-for="(img, index) in resultImages" 
-              :key="index"
-              class="thumbnail"
-              :class="{ 'active': img === resultImage }"
-              @click="resultImage = img"
-            >
-              <img :src="img" alt="结果缩略图" />
-            </div>
-          </div>
         </div>
       </el-col>
       
@@ -200,24 +184,8 @@ import {
         <div class="score-container" v-if="showScore" :class="{ 'fade-in': showScore }">
           <h3>广告检测评分</h3>
           <div class="score-box">
-            <div class="score-value">{{ (scoreValue * 100).toFixed(1) }}</div>
-            <div class="score-label">分</div>
-          </div>
-          
-          <!-- 添加详细评分 -->
-          <div class="detailed-scores" v-if="taskStatus.result_summary && taskStatus.result_summary.scores">
-            <div class="score-item">
-              <span class="score-name">广告融合度 (FA1):</span>
-              <span class="score-number">{{ taskStatus.result_summary.scores.FA1.toFixed(1) }}</span>
-            </div>
-            <div class="score-item">
-              <span class="score-name">品牌露出度 (FA2):</span>
-              <span class="score-number">{{ taskStatus.result_summary.scores.FA2.toFixed(1) }}</span>
-            </div>
-            <div class="score-item">
-              <span class="score-name">场景适配度 (FA3):</span>
-              <span class="score-number">{{ taskStatus.result_summary.scores.FA3.toFixed(1) }}</span>
-            </div>
+            <!-- <div class="score-label">结果：score</div> -->
+            <div class="score-value">{{ scoreValue }}</div>
           </div>
         </div>
       </el-col>
@@ -330,78 +298,5 @@ import {
 
 .hide-controls {
   pointer-events: none;
-}
-
-// 添加缩略图样式
-.thumbnail-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 15px;
-  
-  .thumbnail {
-    width: 60px;
-    height: 60px;
-    border-radius: 4px;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.2s;
-    
-    &:hover {
-      transform: scale(1.05);
-    }
-    
-    &.active {
-      border-color: #2356f6;
-    }
-    
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-}
-
-// 添加详细评分样式
-.detailed-scores {
-  margin-top: 15px;
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  
-  .score-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-    
-    .score-name {
-      color: #ddd;
-    }
-    
-    .score-number {
-      font-weight: 500;
-      color: #fff;
-    }
-  }
-}
-
-.score-box {
-  display: flex;
-  align-items: baseline;
-  
-  .score-value {
-    font-size: 64px;
-    font-weight: bold;
-    color: #fff;
-    line-height: 1;
-  }
-  
-  .score-label {
-    margin-left: 5px;
-    font-size: 20px;
-    color: #ddd;
-  }
 }
 </style>
