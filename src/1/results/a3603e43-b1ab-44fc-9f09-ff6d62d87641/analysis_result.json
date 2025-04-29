@@ -1,0 +1,35 @@
+{
+  "status": "success",
+  "video_info": {
+    "filename": "a3603e43-b1ab-44fc-9f09-ff6d62d87641_3.mp4",
+    "duration": 9.12,
+    "frame_count": 228,
+    "fps": 25.0
+  },
+  "scene": "hospital_room",
+  "ad_detected": true,
+  "FA1": 75.0939269524034,
+  "FA2": 100.0,
+  "FA3": 38.17493354047615,
+  "final_score": 87.79815150191146,
+  "analyzed_frames": 1,
+  "frame_details": [
+    {
+      "frame": 210,
+      "timestamp": 8.4,
+      "scene": "hospital_room",
+      "ad_coords": {
+        "x": 1305,
+        "y": 733,
+        "width": 615,
+        "height": 347
+      },
+      "FA1": 75.0939269524034,
+      "FA2": 100.0,
+      "FA3": 38.17493354047615,
+      "final_score": 87.79815150191146,
+      "scene_image": "frame_210.jpg",
+      "ad_image": "frame_210_evaluation.jpg"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "status": "success",
+  "video_info": {
+    "filename": "27720802-9593-4fa5-8809-14cf2c004f64_1.mp4",
+    "duration": 3.16,
+    "frame_count": 79,
+    "fps": 25.0
+  },
+  "scene": "office",
+  "ad_detected": true,
+  "FA1": 50.77224000961612,
+  "FA2": 100.0,
+  "FA3": 35.28481828733354,
+  "final_score": 79.34559931781826,
+  "analyzed_frames": 1,
+  "frame_details": [
+    {
+      "frame": 60,
+      "timestamp": 2.4,
+      "scene": "office",
+      "scene_image": "frame_60.jpg",
+      "ad_coords": {
+        "x": 1483,
+        "y": 669,
+        "width": 424,
+        "height": 310
+      },
+      "FA1": 50.77224000961612,
+      "FA2": 100.0,
+      "FA3": 35.28481828733354,
+      "final_score": 79.34559931781826,
+      "ad_image": "frame_60_evaluation.jpg"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "status": "success",
+  "video_info": {
+    "filename": "80f4fa79-6f43-4eff-a859-a70183de6a82_4.mp4",
+    "duration": 6.32,
+    "frame_count": 158,
+    "fps": 25.0
+  },
+  "scene": "roof_garden",
+  "ad_detected": true,
+  "FA1": 40.0,
+  "FA2": 100.0,
+  "FA3": 31.78033382676751,
+  "final_score": 74.712133530707,
+  "analyzed_frames": 1,
+  "frame_details": [
+    {
+      "frame": 150,
+      "timestamp": 6.0,
+      "scene": "roof_garden",
+      "scene_image": "frame_150.jpg",
+      "ad_detection": "manual",
+      "ad_coords": {
+        "x": 10,
+        "y": 181,
+        "width": 288,
+        "height": 163
+      },
+      "FA1": 40.0,
+      "FA2": 100.0,
+      "FA3": 31.78033382676751,
+      "final_score": 74.712133530707,
+      "ad_image": "frame_150_manual_evaluation.jpg"
+    }
+  ],
+  "comparison": {
+    "auto_detection": {
+      "frame": 150,
+      "timestamp": 6.0,
+      "scene": "roof_garden",
+      "ad_detection": "auto",
+      "ad_coords": {
+        "x": 215,
+        "y": 371,
+        "width": 776,
+        "height": 709
+      },
+      "FA1": 87.35485618819705,
+      "FA2": 100.0,
+      "FA3": 54.14011428330383,
+      "final_score": 97.86250256978064,
+      "scene_image": "frame_150.jpg",
+      "ad_image": "frame_150_evaluation_auto.jpg"
+    },
+    "manual_selection": {
+      "frame": 150,
+      "timestamp": 6.0,
+      "scene": "roof_garden",
+      "ad_detection": "manual",
+      "ad_coords": {
+        "x": 10,
+        "y": 181,
+        "width": 288,
+        "height": 163
+      },
+      "FA1": 40.0,
+      "FA2": 100.0,
+      "FA3": 31.78033382676751,
+      "final_score": 74.712133530707,
+      "scene_image": "frame_150.jpg",
+      "ad_image": "frame_150_manual_evaluation.jpg"
+    }
+  }
+}

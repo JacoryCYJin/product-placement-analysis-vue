@@ -1,5 +1,6 @@
 import { ref, reactive } from 'vue'
 import { ElMessage } from "element-plus";
+import { uploadVideo, getTaskStatus, getSceneImageUrl, getAdImageUrl, submitAdRegion } from "@/api/video.js";
 
 // 预设的广告类型选项
 export const adTypeOptions = [
@@ -126,12 +127,18 @@ export const sceneInfo = ref({
   description: ''
 });
 export const scoreValue = ref(0);
+export const scoresDetails = ref({
+  FA1: 0,
+  FA2: 0,
+  FA3: 0
+});
+export const showScoreDetails = ref(false);
 
 // 新增状态：框选相关
-export const showAreaSelection = ref(false); // 是否显示区域选择界面
-export const videoElement = ref(null); // 视频元素引用
-export const canvasElement = ref(null); // 画布元素引用
-export const selectionArea = reactive({ // 选择区域
+export const showAreaSelection = ref(false);
+export const videoElement = ref(null);
+export const canvasElement = ref(null);
+export const selectionArea = reactive({
   startX: 0,
   startY: 0,
   width: 0,
@@ -139,11 +146,16 @@ export const selectionArea = reactive({ // 选择区域
   isSelecting: false,
   completed: false
 });
-export const currentAdType = ref(''); // 当前选择的广告类型
-export const customAdType = ref(''); // 自定义的广告类型
+export const currentAdType = ref('');
+export const customAdType = ref('');
 
-// 添加新的状态变量来明确保存原始文件名
-export const originalFileName = ref('');
+// 任务相关状态
+export const currentTaskId = ref('');
+export const taskCompleted = ref(false);
+
+// 添加在状态变量部分（大约在第116行左右，与其他状态变量放在一起）
+export const adResultImage = ref('');
+export const showAdResultImage = ref(false);
 
 // 文件选择后的处理函数
 export const handleFileChange = async (event) => {
@@ -154,36 +166,35 @@ export const handleFileChange = async (event) => {
     // 重置所有状态
     resetAllStates();
     
-    // 明确保存原始文件名
-    originalFileName.value = file.name;
-    console.log("保存的原始文件名:", originalFileName.value);
-    
     // 创建视频URL用于预览
     videoUrl.value = URL.createObjectURL(file);
     ElMessage.success('视频选择成功！');
     
-    // 模拟上传过程
+    // 开始上传
     isUploading.value = true;
     uploadProgress.value = 0;
     
     try {
-      // 模拟上传进度
-      await simulateProgress(0, 100, 2000); // 2秒完成上传
-      ElMessage.success('上传成功！');
-      isUploading.value = false;
+      // 实际上传视频
+      const response = await uploadVideo(file);
       
-      // 显示区域选择界面
-      showAreaSelection.value = true;
-      
-      // 需要等待视频加载
-      setTimeout(() => {
-        // 初始化画布
-        initCanvas();
-      }, 500);
-      
+      if (response.data && response.data.task_id) {
+        currentTaskId.value = response.data.task_id;
+        ElMessage.success('上传成功！');
+        isUploading.value = false;
+        
+        // 显示区域选择界面
+        showAreaSelection.value = true;
+        
+        // 需要等待视频加载
+        setTimeout(() => {
+          // 初始化画布
+          initCanvas();
+        }, 500);
+      }
     } catch (error) {
       resetAllStates();
-      ElMessage.error('处理过程中出现错误，请重试');
+      ElMessage.error('上传失败，请重试');
       console.error(error);
     }
   } else {
@@ -300,7 +311,7 @@ export const endSelection = () => {
   // 确保选择区域有效
   if (Math.abs(selectionArea.width) > 20 && Math.abs(selectionArea.height) > 20) {
     selectionArea.completed = true;
-    ElMessage.success('广告区域框选完成！');
+    ElMessage.success('广告区域框选完成！请确保选择区域比广告实际范围稍大一些');
   }
 };
 
@@ -367,77 +378,167 @@ export const submitSelection = async () => {
   // 隐藏选择界面
   showAreaSelection.value = false;
   
-  // 查找匹配的结果
-  console.log("分析使用的原始文件名:", originalFileName.value);
-  
-  // 简单直接的匹配逻辑
-  let matchedResults;
-  
-  // 查找包含特定数字的文件名
-  if (originalFileName.value.includes("6")) {
-    console.log("文件名包含'6'，使用走廊场景结果");
-    matchedResults = videoResultsMap["6.mp4"];
-  }
-  else if (originalFileName.value.includes("1")) {
-    console.log("文件名包含'1'，使用办公室场景结果");
-    matchedResults = videoResultsMap["1.mp4"];
-  }
-  else {
-    console.log("使用默认结果");
-    matchedResults = videoResultsMap["default"] || [];
-  }
-  
-  // 确保有结果可用
-  if (!matchedResults || matchedResults.length === 0) {
-    console.warn("没有找到匹配结果，使用备用结果");
-    // 使用第一个可用的结果集作为备用
-    const firstKey = Object.keys(videoResultsMap)[0];
-    matchedResults = videoResultsMap[firstKey] || [];
-  }
-  
-  const randomResult = getRandomResult(matchedResults);
-  
-  // 直接显示场景检测中状态，不显示准备中状态
+  // 开始轮询任务状态
   isSceneDetecting.value = true;
   
-  // 5-10秒后显示检测结果图和场景识别
-  const sceneDetectionDelay = 5000 + Math.random() * 5000; // 5-10秒随机延迟
-  setTimeout(() => {
-    isSceneDetecting.value = false; // 隐藏检测中状态
+  try {
+    // 提取选择区域信息
+    // 确保边界值正确（如果用户从右到左或从下到上拖动）
+    let x = selectionArea.startX;
+    let y = selectionArea.startY;
+    let width = selectionArea.width;
+    let height = selectionArea.height;
     
-    // 显示检测结果和场景信息
-    resultImage.value = randomResult.resultImage;
-    sceneInfo.value = {
-      scene: randomResult.scene,
-      description: `${adType}广告：${randomResult.description}`
+    // 处理负宽度和负高度的情况
+    if (width < 0) {
+      x = x + width;
+      width = Math.abs(width);
+    }
+    
+    if (height < 0) {
+      y = y + height;
+      height = Math.abs(height);
+    }
+    
+    // 处理画布和视频的尺寸适配
+    const canvas = canvasElement.value;
+    const video = videoElement.value;
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    
+    // 将广告区域从画布坐标转换为视频坐标的比例
+    const scaleX = video.videoWidth / canvasWidth;
+    const scaleY = video.videoHeight / canvasHeight;
+    
+    // 转换后的广告区域坐标
+    const adRegion = {
+      x: Math.round(x * scaleX),
+      y: Math.round(y * scaleY),
+      width: Math.round(width * scaleX),
+      height: Math.round(height * scaleY),
+      original_video_width: video.videoWidth,
+      original_video_height: video.videoHeight
     };
+    
+    console.log('广告区域信息:', adRegion);
+    console.log('广告类型:', adType);
+    
+    // 发送广告区域信息到后端
+    await submitAdRegion(currentTaskId.value, adRegion, adType);
+    ElMessage.success('区域设置已提交，开始分析');
+  } catch (error) {
+    console.error('提交广告区域信息失败:', error);
+    ElMessage.error('提交广告区域信息失败，但仍将继续分析');
+  }
+  
+  // 开始轮询检查任务状态
+  pollTaskStatus();
+};
+
+// 轮询任务状态
+const pollTaskStatus = async () => {
+  if (!currentTaskId.value) {
+    ElMessage.error('任务ID缺失');
+    isSceneDetecting.value = false;
+    return;
+  }
+  
+  try {
+    const response = await getTaskStatus(currentTaskId.value);
+    const taskData = response.data;
+    
+    if (taskData.status === 'processing') {
+      // 更新进度
+      uploadProgress.value = taskData.progress || 0;
+      
+      // 继续轮询
+      setTimeout(pollTaskStatus, 1000);
+    } else if (taskData.status === 'completed') {
+      // 任务完成，处理结果
+      handleTaskCompleted(taskData);
+    } else {
+      // 任务失败
+      ElMessage.error('分析任务失败');
+      isSceneDetecting.value = false;
+    }
+  } catch (error) {
+    console.error('获取任务状态失败:', error);
+    ElMessage.error('获取任务状态失败');
+    isSceneDetecting.value = false;
+  }
+};
+
+// 处理任务完成
+const handleTaskCompleted = (taskData) => {
+  isSceneDetecting.value = false;
+  
+  console.log('任务完成，数据:', taskData);  // 添加日志帮助调试
+  
+  // 获取场景识别结果
+  if (taskData.result_summary) {
+    const scene = taskData.result_summary.scene;
+    sceneInfo.value = {
+      scene: getSceneDisplayName(scene),
+      description: `${currentAdType.value || customAdType.value}广告：场景类型为${getSceneDisplayName(scene)}，广告内容与环境融合度良好。`
+    };
+    
+    // 设置评分信息 - 只使用总评分
+    if (taskData.result_summary.scores) {
+      scoreValue.value = taskData.result_summary.scores.final_score / 100; // 转换为0-1范围
+      
+      // 设置详细评分
+      scoresDetails.value = {
+        FA1: taskData.result_summary.scores.FA1,
+        FA2: taskData.result_summary.scores.FA2,
+        FA3: taskData.result_summary.scores.FA3
+      };
+    }
+    
+    // 设置场景图片
+    if (taskData.scene_images && taskData.scene_images.length > 0) {
+      const sceneImagePath = taskData.scene_images[0];
+      const filename = sceneImagePath.split('/').pop();
+      resultImage.value = getSceneImageUrl(currentTaskId.value, filename);
+      console.log('场景图片URL:', resultImage.value);
+    }
+    
+    // 设置广告评估图片
+    if (taskData.ad_images && taskData.ad_images.length > 0) {
+      // 获取广告评估图片
+      const adFilename = taskData.ad_images[0].split('/').pop();
+      adResultImage.value = getAdImageUrl(currentTaskId.value, adFilename);
+      showAdResultImage.value = true;
+      console.log('广告评估图片URL:', adResultImage.value);
+    }
+    
+    // 显示结果
     showResultImage.value = true;
     showSceneResult.value = true;
     
-    // 300-500ms后显示广告监测评分
-    const scoreDelay = 300 + Math.random() * 200; // 300-500ms随机延迟
+    // 300-500ms后显示评分
     setTimeout(() => {
-      scoreValue.value = randomResult.score;
       showScore.value = true;
       ElMessage.success('分析评分完成！');
-    }, scoreDelay);
-    
-  }, sceneDetectionDelay);
+    }, 300 + Math.random() * 200);
+  } else {
+    ElMessage.error('分析结果数据不完整');
+  }
 };
 
-// 从结果组中随机选择一个结果
-const getRandomResult = (resultsArray) => {
-  if (!resultsArray || resultsArray.length === 0) {
-    return {
-      resultImage: "/src/assets/results/default.jpg",
-      scene: "未知场景",
-      description: "无法分析视频内容，请尝试其他视频。",
-      score: 0.5
-    };
-  }
+// 场景类型显示名称转换
+const getSceneDisplayName = (sceneType) => {
+  const sceneMap = {
+    'office': '办公室场景',
+    'classroom': '教室场景',
+    'hospital': '医院场景',
+    'corridor': '走廊场景',
+    'restaurant': '餐厅场景',
+    'home': '家庭场景',
+    'outdoor': '户外场景',
+    'shopping': '商场场景'
+  };
   
-  const randomIndex = Math.floor(Math.random() * resultsArray.length);
-  return resultsArray[randomIndex];
+  return sceneMap[sceneType] || sceneType;
 };
 
 // 重置所有状态的辅助函数
@@ -451,29 +552,12 @@ const resetAllStates = () => {
   showAreaSelection.value = false;
   currentAdType.value = '';
   customAdType.value = '';
+  currentTaskId.value = '';
+  taskCompleted.value = false;
+  adResultImage.value = '';
+  showAdResultImage.value = false;
+  showScoreDetails.value = false;
   resetSelection();
-};
-
-// 模拟进度条
-const simulateProgress = (start, end, duration) => {
-  return new Promise((resolve) => {
-    const interval = 100;
-    const steps = duration / interval;
-    const increment = (end - start) / steps;
-    let current = start;
-    let step = 0;
-    
-    const timer = setInterval(() => {
-      step++;
-      current += increment;
-      uploadProgress.value = Math.min(Math.round(current), end);
-      
-      if (step >= steps) {
-        clearInterval(timer);
-        resolve();
-      }
-    }, interval);
-  });
 };
 
 // 触发文件选择

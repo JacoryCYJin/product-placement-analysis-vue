@@ -1,0 +1,35 @@
+{
+  "status": "success",
+  "video_info": {
+    "filename": "6e589212-ef98-4016-92fd-3adcf608ef44_4.mp4",
+    "duration": 6.32,
+    "frame_count": 158,
+    "fps": 25.0
+  },
+  "scene": "roof_garden",
+  "ad_detected": true,
+  "FA1": 40.0,
+  "FA2": 100.0,
+  "FA3": 31.99103866077279,
+  "final_score": 74.79641546430912,
+  "analyzed_frames": 1,
+  "frame_details": [
+    {
+      "frame": 150,
+      "timestamp": 6.0,
+      "scene": "roof_garden",
+      "scene_image": "frame_150.jpg",
+      "ad_coords": {
+        "x": 5,
+        "y": 174,
+        "width": 301,
+        "height": 180
+      },
+      "FA1": 40.0,
+      "FA2": 100.0,
+      "FA3": 31.99103866077279,
+      "final_score": 74.79641546430912,
+      "ad_image": "frame_150_evaluation.jpg"
+    }
+  ]
+}

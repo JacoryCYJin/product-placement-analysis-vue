@@ -1,0 +1,35 @@
+{
+  "status": "success",
+  "video_info": {
+    "filename": "4a2d8c94-a446-4c6d-bcee-5e509119cf1b_6.mp4",
+    "duration": 5.88,
+    "frame_count": 147,
+    "fps": 25.0
+  },
+  "scene": "corridor",
+  "ad_detected": true,
+  "FA1": 81.3788011449488,
+  "FA2": 100.0,
+  "FA3": 56.63059280437957,
+  "final_score": 97.06587746523647,
+  "analyzed_frames": 1,
+  "frame_details": [
+    {
+      "frame": 120,
+      "timestamp": 4.8,
+      "scene": "corridor",
+      "ad_coords": {
+        "x": 633,
+        "y": 399,
+        "width": 1070,
+        "height": 455
+      },
+      "FA1": 81.3788011449488,
+      "FA2": 100.0,
+      "FA3": 56.63059280437957,
+      "final_score": 97.06587746523647,
+      "scene_image": "frame_120.jpg",
+      "ad_image": "frame_120_evaluation.jpg"
+    }
+  ]
+}
